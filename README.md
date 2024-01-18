@@ -1,7 +1,5 @@
 Full-Stack TODO App with CRUD Operations
 
-Elevate your full-stack web development skills with our comprehensive TODO app. This application is designed to provide a hands-on learning experience, emphasizing the fundamental principles of CRUD operations. By working on this project, you'll gain valuable insights into both front-end and back-end development, making it an essential resource for aspiring full-stack developers.
-
 Key Features
 1. CRUD Operations
 Explore the power of Create, Read, Update, and Delete (CRUD) operations, the cornerstone of dynamic web applications. Manipulate tasks seamlessly, honing your skills in data management and interaction.
