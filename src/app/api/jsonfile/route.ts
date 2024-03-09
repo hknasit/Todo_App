@@ -1,23 +1,26 @@
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import { resolve } from "path";
 
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs'
-import path from "path";
- 
-export  function GET() {
+export function GET() {
+  return new Promise((resolve, reject) => {
+    try {
+      const file = fs.readFile(
+        process.cwd() + "/src/json/todos.json",
+        (err, data) => {
+          if (err) return reject(NextResponse.json(err));
 
-    return  new Promise( (resolve, reject) => {
-        try {
-            // path.join()
-           var filePath = path.join(__dirname, '../../../json/todos.json');
-           fs.readFile(filePath, (err,data) => {
-            if(err) resolve(NextResponse.json({message:err}))
-            
-                resolve( NextResponse.json({message:data}))
-            })
-        } catch (error:any) {
-            console.log("in the json error file");
-
+          return resolve(NextResponse.json(JSON.parse(data.toString())));
         }
+      );
+    } catch (error: any) {
+      NextResponse.json(error);
+    }
+  });
+}
+
+export function POST() {
+    return new Promise((resolve, reject) => {
+
     })
-    
 }
