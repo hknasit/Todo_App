@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
-import { resolve } from "path";
+
+type todo = {
+    id: number;
+    name: string;
+    completed: boolean;
+  };
 
 export function GET() {
   return new Promise((resolve, reject) => {
@@ -19,8 +24,27 @@ export function GET() {
   });
 }
 
-export function POST() {
-    return new Promise((resolve, reject) => {
+export async function POST(request:NextRequest) {
+    
+  try {
+    const requestObject = await request.json();
+    const newTodo = requestObject;
+    const todos = JSON.parse(fs.readFileSync(process.cwd()+'/src/json/todos.json', 'utf-8'));
 
+    const newTodos = todos.map((todo:todo) => {
+      if(todo.id == newTodo.id){
+        return newTodo;
+      }else {
+        return todo
+      }
     })
+
+    fs.writeFileSync(process.cwd()+'/src/json/todos.json', JSON.stringify(newTodos));
+    return NextResponse.json("todo has bing change")
+  } catch (error) {
+    return NextResponse.error();
+  }
+
+   
+    
 }
