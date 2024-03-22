@@ -16,15 +16,12 @@ export default function page() {
     axios.get("/api/jsonfile").then((data) => setTodos([...data.data]));
   }, []);
 
-  async function nameChange(input: any, todo: todo) {
-    const response = await axios.post("/api/jsonfile", {
-      ...todo,
-      name: input.target.value,
-    });
-    if (response.status == 200) {
+  async function todoChange(modifiedTodo: todo) {
+    const response = await axios.post("/api/jsonfile", modifiedTodo);
+    if (response.data.status == true) {
       const newTodos = todos.map((todo) => {
-        if (todo.id == input.target.id) {
-          return { ...todo, name: input.target.value };
+        if (todo.id == modifiedTodo.id) {
+          return modifiedTodo;
         } else {
           return todo;
         }
@@ -33,26 +30,26 @@ export default function page() {
     }
   }
 
-  function completedChange(input: any, todo: todo) {
-    axios
-      .post("/api/jsonfile", { ...todo, completed: input.target.checked })
-      .then((response) => console.log(response));
-
-    const newTodos = todos.map((todo) => {
-      if (todo.id == input.target.id) {
-        return { ...todo, completed: input.target.checked };
-      } else {
-        return todo;
-      }
-    });
-
-    setTodos(newTodos);
+  async function deleteTodo(todo: todo) {
+    const response = await axios.delete(`/api/jsonfile/${todo.id}`);
+    if (response.data.status) {
+      const newTodos = todos.filter((Oldtodo) => {
+        if (Oldtodo.id == todo.id) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+      setTodos(newTodos);
+    }
   }
   return (
     <>
       <div>
         {todos.map((todo) => {
-          return <JsonComponent key={todo.id} todo={todo} />;
+          return (
+            <JsonComponent key={todo.id} todo={todo} todoChange={todoChange} deleteTodo={deleteTodo} />
+          );
         })}
       </div>
     </>

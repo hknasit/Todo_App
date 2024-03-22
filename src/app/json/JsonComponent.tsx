@@ -5,16 +5,24 @@ type todo = {
   name: string;
   completed: boolean;
 };
-export default function JsonComponent({ todo }: { todo: todo }) {
+export default function JsonComponent({
+  todo,
+  todoChange,
+  deleteTodo,
+}: {
+  todo: todo;
+  todoChange: (todo: todo) => {};
+  deleteTodo: (todo: todo) => {};
+}) {
   const [mode, setMode] = useState<boolean>(false);
+  const [todo1, setTodo] = useState(todo);
 
-  function nameChange(oldTodo: todo, name: string) {
-    const newTodo = { ...oldTodo, name: name };
-    axios.post("api/jsonfile", { ...newTodo }).then((data) => {
-      if (data.data.status) {
-        alert(data.data.message);
-      }
-    });
+  function onSave() {
+    todoChange(todo1);
+    setMode(false);
+  }
+  function onDelete() {
+    deleteTodo(todo1);
   }
   return (
     <div>
@@ -22,10 +30,23 @@ export default function JsonComponent({ todo }: { todo: todo }) {
         <>
           <input
             type="text"
-            value={todo.name}
-            onBlur={(input) => nameChange(todo, input.target.value)}
+            value={todo1.name}
+            onChange={(input) =>
+              setTodo((todo) => {
+                return { ...todo, name: input.target.value };
+              })
+            }
           />
-          <input type="checkbox" checked={todo.completed} />
+          <input
+            type="checkbox"
+            defaultChecked={todo.completed}
+            onClick={(input) =>
+              setTodo((todo) => {
+                //@ts-ignore
+                return { ...todo, completed: input.target.checked };
+              })
+            }
+          />
         </>
       ) : (
         <>
@@ -34,9 +55,14 @@ export default function JsonComponent({ todo }: { todo: todo }) {
           <input type="checkbox" checked={todo.completed} />
         </>
       )}
-
-      <button onClick={() => setMode(true)}>Edit</button>
-      <button onClick={() => setMode(false)}>Save</button>
+      {mode ? (
+        <>
+          <button onClick={onSave}>Save</button>
+          <button onClick={onDelete}>Delete</button>
+        </>
+      ) : (
+        <button onClick={() => setMode(true)}>Edit</button>
+      )}
     </div>
   );
 }

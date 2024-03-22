@@ -52,12 +52,12 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const newTodo = await request.json();
+    const searchParams = request.nextUrl.searchParams;
+    const id: number = Number.parseInt(searchParams.get("id") || "0");
 
-    console.log(newTodo);
     const oldTodos = JSON.parse(fs.readFileSync(FILEPATH, "utf-8"));
     const newTodos = oldTodos.filter((todo: todo) => {
-      if (newTodo.id == todo.id) {
+      if (id == todo.id) {
         return false;
       } else {
         return true;
