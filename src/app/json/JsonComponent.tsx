@@ -1,5 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+
 type todo = {
   id: number;
   name: string;
@@ -25,44 +29,45 @@ export default function JsonComponent({
     deleteTodo(todo1);
   }
   return (
-    <div>
+    <tr>
       {mode ? (
         <>
-          <input
-            type="text"
-            value={todo1.name}
-            onChange={(input) =>
-              setTodo((todo) => {
-                return { ...todo, name: input.target.value };
-              })
-            }
-          />
-          <input
-            type="checkbox"
-            defaultChecked={todo.completed}
-            onClick={(input) =>
-              setTodo((todo) => {
-                //@ts-ignore
-                return { ...todo, completed: input.target.checked };
-              })
-            }
-          />
+          <td>
+          <TextField id="standard-basic" variant="standard" value={todo1.name} onChange={(input) =>
+                setTodo((todo) => {
+                  return { ...todo, name: input.target.value };
+                })} />
+           
+          </td>
+          <td>
+            <Checkbox
+              checked={todo1.completed}
+              onChange={(input) =>
+                setTodo((todo) => {
+                  return { ...todo, completed: input.target.checked };
+                })
+              }
+            />
+          </td>
         </>
       ) : (
         <>
-          <b />
-          {todo.name} <b />
-          <input type="checkbox" checked={todo.completed} />
+          <td style={{ width: "200px" }}>{todo.name}</td>
+          <td>
+            <Checkbox disabled checked={todo.completed} />
+          </td>
         </>
       )}
-      {mode ? (
-        <>
-          <button onClick={onSave}>Save</button>
-          <button onClick={onDelete}>Delete</button>
-        </>
-      ) : (
-        <button onClick={() => setMode(true)}>Edit</button>
-      )}
-    </div>
+      <td>
+        {mode ? (
+          <>
+            <Button onClick={onSave}>Save</Button>
+            <Button onClick={onDelete}>Delete</Button>
+          </>
+        ) : (
+          <Button onClick={() => setMode(true)}>Edit</Button>
+        )}
+      </td>
+    </tr>
   );
 }

@@ -25,26 +25,38 @@ export function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const requestObject = await request.json();
+    const requestObject:todo = await request.json();
 
-    const todos = JSON.parse(fs.readFileSync(FILEPATH, "utf-8"));
+    const todos:todo[] = JSON.parse(fs.readFileSync(FILEPATH, "utf-8"));
 
-    const newTodos = todos.map((todo: todo) => {
-      if (todo.id == requestObject.id) {
-        return requestObject;
-      } else {
-        return todo;
-      }
-    });
+    const istodo = todos.filter((todo:todo) => todo.id == requestObject.id);
+    if(istodo[0]){
 
-    fs.writeFileSync(FILEPATH, JSON.stringify(newTodos));
-    return NextResponse.json(
-      { message: "todo has bing change", status: true },
-      { status: 200 }
-    );
+      const newTodos = todos.map((todo: todo) => {
+        if (todo.id == requestObject.id) {
+          return requestObject;
+        } else {
+          return todo;
+        }
+      });
+  
+  
+      fs.writeFileSync(FILEPATH, JSON.stringify(newTodos));
+      return NextResponse.json(
+        { message: "todo has bing change", status: true },
+        { status: 200 }
+      );
+    }else{
+      const newTodos = [...todos, {...requestObject, id:todos[todos.length-1].id+1}];
+      fs.writeFileSync(FILEPATH, JSON.stringify(newTodos));
+      return NextResponse.json(
+        { message: "todo has bing added", status: true, data:{...requestObject, id:todos.length+1}  },
+        { status: 200 }
+      );
+    }
   } catch (error) {
     return NextResponse.json(
-      { message: "Id not found", status: false },
+      { message: "Internal Server Error", status: false },
       { status: 404 }
     );
   }
@@ -53,7 +65,8 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const id: number = Number.parseInt(searchParams.get("id") || "0");
+    const id: number = Number.parseInt(searchParams.get("id") ?? "0");
+    
 
     const oldTodos = JSON.parse(fs.readFileSync(FILEPATH, "utf-8"));
     const newTodos = oldTodos.filter((todo: todo) => {

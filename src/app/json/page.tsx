@@ -2,6 +2,8 @@
 import axios from "axios";
 import React, { EventHandler, useEffect, useState } from "react";
 import JsonComponent from "./JsonComponent";
+import { Button, Stack, TextField } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 
 type todo = {
   id: number;
@@ -11,6 +13,11 @@ type todo = {
 
 export default function page() {
   const [todos, setTodos] = useState<todo[]>([]);
+  const [newTodo, setNewTodo] = useState<todo>({
+    name: "",
+    completed: false,
+    id: 0,
+  });
 
   useEffect(() => {
     axios.get("/api/jsonfile").then((data) => setTodos([...data.data]));
@@ -31,7 +38,7 @@ export default function page() {
   }
 
   async function deleteTodo(todo: todo) {
-    const response = await axios.delete(`/api/jsonfile/${todo.id}`);
+    const response = await axios.delete(`/api/jsonfile/?id=${todo.id}`);
     if (response.data.status) {
       const newTodos = todos.filter((Oldtodo) => {
         if (Oldtodo.id == todo.id) {
@@ -43,15 +50,55 @@ export default function page() {
       setTodos(newTodos);
     }
   }
+  async function addNew() {
+    const response = await axios.post("/api/jsonfile", newTodo);
+    const todo = response.data.data;
+    if (response.data.status == true) {
+      const newTodos = [...todos, todo];
+      setTodos(newTodos);
+    }
+  }
   return (
     <>
-      <div>
-        {todos.map((todo) => {
-          return (
-            <JsonComponent key={todo.id} todo={todo} todoChange={todoChange} deleteTodo={deleteTodo} />
-          );
-        })}
-      </div>
+      <Stack direction={"column"} alignItems={"center"}>
+        <div style={{margin:"20px", alignItems:"center", alignContent:"center", display:"flex"}}>
+          <TextField
+          style={{marginRight:"10px"}}
+            id="filled-basic"
+            label="New Todo Details"
+            variant="filled"
+            value={newTodo.name}
+            onChange={(e) =>
+              setNewTodo((old) => {
+                return { ...old, name: e.target.value };
+              })
+            }
+          />
+
+          <Button onClick={addNew}>Save</Button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <td style={{ width: "200px", fontWeight: "bold" }}>Details</td>
+              <td style={{ width: "200px", fontWeight: "bold" }}>Completed</td>
+              <td style={{ width: "200px", fontWeight: "bold" }}>Action</td>
+            </tr>
+          </thead>
+          <tbody>
+            {todos.map((todo) => {
+              return (
+                <JsonComponent
+                  key={todo.id}
+                  todo={todo}
+                  todoChange={todoChange}
+                  deleteTodo={deleteTodo}
+                />
+              );
+            })}
+          </tbody>
+        </table>
+      </Stack>
     </>
   );
 }
