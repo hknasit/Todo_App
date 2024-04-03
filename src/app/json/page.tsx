@@ -56,14 +56,22 @@ export default function page() {
     if (response.data.status == true) {
       const newTodos = [...todos, todo];
       setTodos(newTodos);
+      setNewTodo({name:"", completed:false, id:0})
     }
   }
   return (
     <>
       <Stack direction={"column"} alignItems={"center"}>
-        <div style={{margin:"20px", alignItems:"center", alignContent:"center", display:"flex"}}>
+        <div
+          style={{
+            margin: "20px",
+            alignItems: "center",
+            alignContent: "center",
+            display: "flex",
+          }}
+        >
           <TextField
-          style={{marginRight:"10px"}}
+            style={{ marginRight: "10px" }}
             id="filled-basic"
             label="New Todo Details"
             variant="filled"

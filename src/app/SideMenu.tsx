@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import Link from "next/link";
 import React from "react";
 
 export default function SideMenu() {
@@ -28,10 +29,11 @@ export default function SideMenu() {
         <Toolbar />
         {/* <Divider /> */}
         <List>
-          {["JSON", "MongoDB", "SQL", "Postgres"].map((text, index) => (
+          {["json", "MongoDB", "SQL", "Postgres"].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
-                <ListItemText primary={text} />
+              <Link href={`/${text}`}>{text.toLocaleUpperCase() }</Link>
+                {/* <ListItemText primary={text}  /> */}
               </ListItemButton>
             </ListItem>
           ))}

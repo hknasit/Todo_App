@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     const todos:todo[] = JSON.parse(fs.readFileSync(FILEPATH, "utf-8"));
 
     const istodo = todos.filter((todo:todo) => todo.id == requestObject.id);
+
     if(istodo[0]){
 
       const newTodos = todos.map((todo: todo) => {
